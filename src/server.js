@@ -1,4 +1,4 @@
-const express = require("express");
+const express = require('express');
 const fsp = require("fs/promises");
 const path = require("path");
 
@@ -119,15 +119,28 @@ servidor.put("/dados/:nomeDoArquivo", async (req, res) => {
 
 servidor.post("/dados", async (req, res) => {
   // Usar o "nome" como o nome do arquivo a ser criado
-try{
-  let { conteudo } = req.body;
-  const { nomeDoArquivo } = req.params;
-  const nomeArquivo = path.basename(nomeDoArquivo);
-  const caminhoArquivo = path.join(__dirname, "textos", nomeArquivo + ".txt");
-}
+
   // Usar "conteudo" como o conteudo do arquivo
 
   // Receber esse dois dados no req.body
+
+  servidor.post("/dados", async (req, res) => {
+    const { nome, conteudo } = req.body;
+
+    if (!nome || !conteudo) {
+      return res.status(400).json({ error: "Nome e conteúdo são obrigatórios." });
+    }
+
+   const caminhoArquivo = path.join(__dirname, nome);
+
+    try {
+      await fs.promises.writeFile(caminhoArquivo, conteudo);
+      res.status(201).json({ message: "Arquivo criado com sucesso." });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: "Erro ao criar o arquivo." });
+    }
+  });
 });
 
 servidor.listen(3000, () => console.log("Servidor está rodando... 🔥"));
